@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+
+    <link rel="stylesheet" href="/assets/css/style-starter.css">
+
+</head>
+
+<body class="bg-secondary">
+
+    <!-- header -->
+    <div th:replace="~{layouts/header :: header}">...</div>
+
+    <div class="site-section mt-5 container">
+
+        <div class="table-responsive-class">
+
+            <table class="table table-striped text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Event ID</th>
+                        <th scope="col">Event Name</th>
+                        <th scope="col">Event Date</th>
+                        <th scope="col">Event Location</th>
+                        <th scope="col">Event Manager ID</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="table-dark">
+                    <tr th:each="event: ${eventList}">
+                        <td th:text="${event.eventId}"></td>
+                        <td th:text="${event.eventName}"></td>
+                        <td th:text="${event.eventDate}"></td>
+                        <td th:text="${event.eventLocation}"></td>
+                        <td th:text="${event.user.userId}"></td>
+                        <td>
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                th:attr="data-target='#createNotificationModal' + ${event.eventId}, data-event-id=${event.eventId}, data-user-id=${event.user.userId}">
+                                Create Notification
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" th:id="'createNotificationModal' + ${event.eventId}" tabindex="-1"
+                                role="dialog" aria-labelledby="createNotificationModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="createNotificationModalLabel">Create
+                                                Notification</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form th:action="@{/admin/createNotification}" method="post"
+                                                class="signin-form" th:object="${notificationDto}">
+                                                <div class="form-group">
+                                                    <label for="notificationContent">Content</label>
+                                                    <textarea class="form-control" th:field="*{notificationContent}"
+                                                        placeholder="Content"></textarea>
+                                                    <input type="hidden" name="eventId" th:value="${event.eventId}" />
+                                                    <input type="hidden" name="userId"
+                                                        th:value="${event.user.userId}" />
+
+                                                </div>
+                                                <button type="submit" class="btn btn-primary btn-block">Create</button>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a th:href="@{/admin/manageParticipants(id=${event.eventId})}"
+                                class="btn btn-warning btn-sm">
+                                Manage Participants
+                            </a>
+                            <a th:href="@{/admin/deleteEvent(eventId=${event.eventId})}" class="btn btn-danger btn-sm">
+                                Delete Event
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-2 login-center text-start">
+            <a th:href="@{/dashboard}">
+                <button class="btn btn-dark btn-style btn-style-3 text-left">BACK</button>
+            </a>
+        </div>
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary btn-lg d-flex mx-auto" data-toggle="modal"
+            data-target="#createEventModal">
+            Create Event
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="createEventModal" tabindex="-1" role="dialog"
+            aria-labelledby="createEventModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createEventModalLabel">Create Event</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form th:action="@{/admin/createEvent}" method="post" class="signin-form"
+                            th:object="${eventDto}">
+                            <div class="form-group">
+                                <label for="eventName">Event Name</label>
+
+                                <input type="text" class="form-control" th:field="*{eventName}"
+                                    placeholder="Event Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="eventDate">Event Date</label>
+
+                                <input type="date" class="form-control" th:field="*{eventDate}"
+                                    placeholder="Event Date">
+                            </div>
+                            <div class="form-group">
+                                <label for="eventLocation">Event Location</label>
+
+                                <input type="text" class="form-control" th:field="*{eventLocation}"
+                                    placeholder="Event Location">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Create</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap Bundle with Popper (JS) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#createNotificationModal').on('hidden.bs.modal', function () {
+                // Model kapatıldığında textarea içeriğini temizle
+                $('#notificationContent').val('');
+            });
+        });
+    </script>
+</body>
+
+</html>

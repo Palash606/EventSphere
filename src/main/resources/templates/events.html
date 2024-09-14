@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+>
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/assets/css/style-starter.css">
+
+</head>
+
+<body class="bg-secondary">
+
+    <!-- header -->
+    <div th:replace="~{layouts/header :: header}">...</div>
+
+    <div class="site-section mt-5 container">
+
+        <div class="table-responsive-class">
+
+            <h3 class="text-center pt-3 text-light">Organized Events</h3>
+            <table class="table table-striped text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th class="col-2" scope="col">Event Name</th>
+                        <th class="col-2" scope="col">Event Date</th>
+                        <th class="col-2" scope="col">Event Location</th>
+                        <th class="col-1" scope="col">Participants Count</th>
+                        <th class="col-6" scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="table-dark">
+                    <!-- Organized Events -->
+                    <tr th:each="eventMap: ${organizedEvents}">
+                        <td class="col-2" th:text="${eventMap[0].eventName}"></td>
+                        <td class="col-2" th:text="${eventMap[0].eventDate}"></td>
+                        <td class="col-2" th:text="${eventMap[0].eventLocation}"></td>
+                        <td class="col-2" th:text="${eventMap[1]}"></td>
+                        <td class="col-6">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                data-target="#createNotificationModal"
+                                th:attr="data-event-id=${eventMap[0].eventId}, data-user-id=${eventMap[0].user.userId}">
+                                Create Notification
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="createNotificationModal" tabindex="-1" role="dialog"
+                                aria-labelledby="createNotificationModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content bg-dark">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="createNotificationModalLabel">Create
+                                                Notification</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form th:action="@{/createNotification}" method="post" class="signin-form"
+                                                th:object="${notificationDto}">
+                                                <div class="form-group">
+                                                    <label for="notificationContent">Content</label>
+                                                    <textarea class="form-control" th:field="*{notificationContent}"
+                                                        placeholder="Content"></textarea>
+                                                    <input type="hidden" name="eventId"
+                                                        th:value="${eventMap[0].eventId}" />
+                                                    <input type="hidden" name="userId"
+                                                        th:value="${eventMap[0].user.userId}" />
+
+                                                </div>
+                                                <button type="submit" class="btn btn-info">Create</button>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Update Button -->
+                            <button type="button" class="btn btn-info btn-sm" data-toggle="modal"
+                                th:attr="data-target='#updateEventModal' + ${eventMap[0].eventId}">
+                                Update Event
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" th:id="'updateEventModal' + ${eventMap[0].eventId}" tabindex="-1"
+                                role="dialog" aria-labelledby="updateEventModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                    <div class="modal-content bg-dark">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="updateEventModalLabel">Update Event</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form th:action="@{/updateEvent}" method="post" th:object="${event}">
+                                                <input type="hidden" name="eventId" th:value="${eventMap[0].eventId}" />
+                                                <div class="form-group">
+                                                    <label for="eventName">Event Name</label>
+                                                    <input type="text" name="eventName" class="form-control"
+                                                        th:value="${eventMap[0].eventName}" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="eventDate">Event Date</label>
+                                                    <input type="date" name="eventDate" class="form-control"
+                                                        th:value="${eventMap[0].eventDate}" />
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="eventLocation">Event Location</label>
+                                                    <input type="text" name="eventLocation" class="form-control"
+                                                        th:value="${eventMap[0].eventLocation}" />
+                                                </div>
+                                                <button type="submit" class="btn btn-info">Update</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <a th:href="@{/deleteEvent(eventId=${eventMap[0].eventId})}" class="btn btn-danger btn-sm">
+                                Delete Event
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <h3 class="text-center text-light">Enrolled Events</h3>
+            <table class="table table-striped text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Event Name</th>
+                        <th scope="col">Event Date</th>
+                        <th scope="col">Event Location</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="table-dark">
+                    <!-- Enrolled Events -->
+                    <tr th:each="event: ${enrolledEvents}">
+                        <td th:text="${event.eventName}"></td>
+                        <td th:text="${event.eventDate}"></td>
+                        <td th:text="${event.eventLocation}"></td>
+                        <td><a th:href="@{/leaveEvent(eventId=${event.eventId})}" class="btn btn-danger">Leave</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <h3 class="text-center text-light">Available Events</h3>
+            <table class="table table-striped text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Event Name</th>
+                        <th scope="col">Event Date</th>
+                        <th scope="col">Event Location</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="table-dark">
+                    <!-- Available Events -->
+                    <tr th:each="event: ${events}">
+                        <td th:text="${event.eventName}"></td>
+                        <td th:text="${event.eventDate}"></td>
+                        <td th:text="${event.eventLocation}"></td>
+                        <td><a th:href="@{/joinEvent(eventId=${event.eventId})}" class="btn btn-info btn-sm">Join</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-2 login-center text-start">
+            <a th:href="@{/dashboard}">
+                <button class="btn btn-dark btn-style btn-style-3 text-left">BACK</button>
+            </a>
+        </div>
+    </div>
+    <!-- Bootstrap Bundle with Popper (JS) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

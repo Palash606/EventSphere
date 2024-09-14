@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="/assets/css/style-starter.css">
+
+</head>
+
+<body>
+
+    <!-- header -->
+    <div th:replace="~{layouts/header :: header}">...</div>
+
+    <div class="site-section mt-5">
+
+        <div class="table-responsive-class">
+
+            <table class="table table-striped text-center">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col">Participant Email</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="user: ${event.participants}">
+                        <td th:text="${user.email}"></td>
+                        <td><a th:href="@{/admin/deleteParticipantsFromEvent(email=${user.email})}"
+                                class="btn btn-warning">DELETE
+                                PARTICIPANTS</a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-2 login-center text-start">
+            <a th:href="@{/dashboard}">
+                <button class="btn btn-dark btn-style btn-style-3 text-left">BACK</button>
+            </a>
+        </div>
+
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addParticipantModal">
+            Add Participant
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="addParticipantModal" tabindex="-1" role="dialog"
+            aria-labelledby="addParticipantModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addParticipantModalLabel">Add Participant</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form th:action="@{/admin/addParticipantToEvent}" method="post" class="signin-form"
+                            th:object="${user}">
+                            <div class="form-group">
+                                <label for="email">Email of User</label>
+                                <input type="text" class="form-control" th:field="*{email}" placeholder="Email">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block">Add</button>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap Bundle with Popper (JS) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,145 @@
+<!--
+Author: W3layouts
+Author URL: http://w3layouts.com xmlns:th="http://www.thymeleaf.org"
+-->
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles */
+        .notification-btn {
+            position: relative;
+            display: inline-block;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: red;
+            border-radius: 50%;
+            padding: 2px 7px;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <!-- header -->
+    <div th:replace="~{layouts/header :: header}">...</div>
+    <div class="container-fluid bg-dark">
+        <div class="row" style="min-height: 100vh;">
+            <div class="col-md-12 d-flex justify-content-center" style="margin-top: 10rem;">
+                <section class="py-1" id="contact">
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body bg-dark text-light">
+                            <h5 class="card-title text-center">Info</h5>
+                            <p class="card-text" th:text="${user.username}"></p>
+                            <p class="card-text" th:text="${user.email}"></p>
+                        </div>
+                    </div>
+                </section>
+                <section class="py-1" id="events">
+                    <div class="card" style="width: 38rem;">
+                        <div class="card-body bg-dark text-light">
+                            <h5 class="card-title text-center">Upcoming Events</h5>
+                            <div class="container">
+                                <table class="table table-dark text-center">
+                                    <thead>
+                                        <tr>
+                                            <th>Event Name</th>
+                                            <th>Event Date</th>
+                                            <th>Event Location</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="event : ${orderedEvents}">
+                                            <td th:text="${event.eventName}"></td>
+                                            <td th:text="${event.eventDate}"></td>
+                                            <td th:text="${event.eventLocation}"></td>
+                                            <td>
+                                                <!-- <button type="button" class="btn btn-info btn-sm"
+                                                    th:href="@{/getNotifications(eventId=${event.eventId})}"
+                           Show Notifications                          data-toggle="modal" data-target="#displayNotificationsModal"
+                                                    th:attr="data-notifications=${notifications}">
+                                                    Show Notifications
+                                                </button> -->
+                                                <button type="button" class="btn btn-sm btn-primary notification-btn"
+                                                    th:attr="data-event-id=${event.eventId}" data-toggle="modal"
+                                                    data-target="#displayNotificationsModal">
+                                                    <i class="fas fa-bell"></i>
+                                                    <span class="notification-count"
+                                                        th:each="item : ${eventIdsWithUnreadNotificationCounts}"
+                                                        th:if="${item[0] == event.eventId}" th:text="${item[1]}">
+                                                        0
+                                                    </span>
+                                                </button>
+
+                                                <!-- Modal -->
+                                                <div class="modal fade" th:id="displayNotificationsModal" tabindex="-1"
+                                                    role="dialog" aria-labelledby="displayNotificationsModalLabel"
+                                                    aria-hidden="true">
+                                                    <div class="modal-dialog" role="document">
+                                                        <div class="modal-content bg-dark">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title"
+                                                                    id="displayNotificationsModalLabel">
+                                                                    Notifications
+                                                                </h5>
+                                                                <button type="button" class="close" data-dismiss="modal"
+                                                                    aria-label="Close">
+                                                                    <span aria-hidden="true">&times;</span>
+                                                                </button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <table class="table table-dark">
+                                                                    <thead>
+                                                                        <tr>
+                                                                            <th>Content</th>
+                                                                        </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr id="notificationList">
+                                                                        </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper (JS) -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+
+</body>
+
+</html>
